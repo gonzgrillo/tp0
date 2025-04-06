@@ -1,15 +1,16 @@
 #include"utils.h"
 
 t_log* logger;
+int fd_escucha;
 
 int iniciar_servidor(void)
 {
 	// Quitar esta línea cuando hayamos terminado de implementar la funcion
-	assert(!"no implementado!");
-
+	//assert(!"no implementado!");
+	int err;
 	int socket_servidor;
 
-	struct addrinfo hints, *servinfo, *p;
+	struct addrinfo hints, *servinfo;
 
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_INET;
@@ -19,11 +20,17 @@ int iniciar_servidor(void)
 	getaddrinfo(NULL, PUERTO, &hints, &servinfo);
 
 	// Creamos el socket de escucha del servidor
+	fd_escucha = socket(servinfo->ai_family,
+                         servinfo->ai_socktype,
+                         servinfo->ai_protocol);
 
 	// Asociamos el socket a un puerto
 
-	// Escuchamos las conexiones entrantes
+	err = bind(fd_escucha, servinfo->ai_addr, servinfo->ai_addrlen);
 
+	
+	// Escuchamos las conexiones entrantes
+	err = listen(fd_escucha, SOMAXCONN);
 	freeaddrinfo(servinfo);
 	log_trace(logger, "Listo para escuchar a mi cliente");
 
@@ -33,10 +40,10 @@ int iniciar_servidor(void)
 int esperar_cliente(int socket_servidor)
 {
 	// Quitar esta línea cuando hayamos terminado de implementar la funcion
-	assert(!"no implementado!");
+	//assert(!"no implementado!");
 
 	// Aceptamos un nuevo cliente
-	int socket_cliente;
+	int socket_cliente = accept(fd_escucha, NULL, NULL);;
 	log_info(logger, "Se conecto un cliente!");
 
 	return socket_cliente;
